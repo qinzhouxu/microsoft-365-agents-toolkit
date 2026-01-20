@@ -134,7 +134,7 @@ export async function initPage(
     loggedIn?: boolean;
   }
 ): Promise<Page> {
-  let page = await context.newPage();
+  const page = await context.newPage();
   page.setDefaultTimeout(Timeout.playwrightDefaultTimeout);
   const installAppUrl = `https://teams.microsoft.com/_#/l/app/${teamsAppId}?installAppPackage=true`;
   const teamsUrl = `https://teams.microsoft.com`;
@@ -212,34 +212,40 @@ export async function initPage(
         }
         await page.close();
         console.log(`open teams page`);
-        try {
-          //try upload app package file
-          page = await context.newPage();
 
-          await Promise.all([page.goto(teamsUrl), page.waitForNavigation()]);
-          await page.waitForTimeout(Timeout.longTimeWait);
+        // [bug fixed] disabled add from package
+        // try {
+        //   //try upload app package file
+        //   page = await context.newPage();
 
-          // Upload app package file
-          await uploadPackage(page, options?.projectPath, options?.env);
-          await page.waitForTimeout(Timeout.shortTimeLoading);
-        } catch {
-          await page.screenshot({
-            path: getPlaywrightScreenshotPath("upload_page"),
-            fullPage: true,
-          });
-          // then try add app url
-          await page.close();
-          page = await context.newPage();
+        //   await Promise.all([page.goto(teamsUrl), page.waitForNavigation()]);
+        //   await page.waitForTimeout(Timeout.longTimeWait);
 
-          await Promise.all([
-            page.goto(installAppUrl),
-            page.waitForNavigation(),
-          ]);
-          await page.waitForTimeout(Timeout.longTimeWait);
-        }
+        //   // Upload app package file
+        //   await uploadPackage(page, options?.projectPath, options?.env);
+        //   await page.waitForTimeout(Timeout.shortTimeLoading);
+        // } catch {
+        //   await page.screenshot({
+        //     path: getPlaywrightScreenshotPath("upload_page"),
+        //     fullPage: true,
+        //   });
+        //   // then try add app url
+        //   await page.close();
+        //   page = await context.newPage();
+
+        //   await Promise.all([
+        //     page.goto(installAppUrl),
+        //     page.waitForNavigation(),
+        //   ]);
+        //   await page.waitForTimeout(Timeout.longTimeWait);
+        // }
 
         // Click add button
         console.log("click add button");
+        await page.screenshot({
+          path: getPlaywrightScreenshotPath("before-add"),
+          fullPage: true,
+        });
         let addBtn;
         try {
           addBtn = await page?.waitForSelector(
@@ -279,6 +285,10 @@ export async function initPage(
         }
         await page.waitForTimeout(Timeout.shortTimeLoading);
         // click Open button to add to Team, Chat or Meeting
+        await page.screenshot({
+          path: getPlaywrightScreenshotPath("before-open-app"),
+          fullPage: true,
+        });
         try {
           const openApp = await page?.waitForSelector(
             "button[data-testid='open-app'][data-tid='open-app']"
@@ -1231,13 +1241,19 @@ export async function validateTabDocker(
         const [popup] = await Promise.all([
           page
             .waitForEvent("popup")
-            .then((popup) =>
-              popup
-                .waitForEvent("close", {
+            .then(async (popup) => {
+              await popup.screenshot({
+                path: getPlaywrightScreenshotPath("popup-page"),
+                fullPage: true,
+              });
+              try {
+                return await popup.waitForEvent("close", {
                   timeout: Timeout.playwrightConsentPopupPage,
-                })
-                .catch(() => popup)
-            )
+                });
+              } catch {
+                return popup;
+              }
+            })
             .catch(() => {}),
           frame?.click('button:has-text("Accept")', {
             timeout: Timeout.playwrightAddAppButton,
