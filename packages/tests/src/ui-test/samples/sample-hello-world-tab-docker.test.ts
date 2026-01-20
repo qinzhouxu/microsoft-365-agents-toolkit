@@ -7,7 +7,7 @@
 
 import { Page } from "playwright";
 import { TemplateProject, LocalDebugTaskLabel } from "../../utils/constants";
-import { validateTab, reopenPage } from "../../utils/playwrightOperation";
+import { validateTabDocker, reopenPage } from "../../utils/playwrightOperation";
 import { CaseFactory } from "./sampleCaseFactory";
 import { Env } from "../../utils/env";
 import { SampledebugContext } from "./sampledebugContext";
@@ -17,7 +17,7 @@ class HelloWorldTabDockerTestCase extends CaseFactory {
     page: Page,
     options?: { includeFunction: boolean }
   ): Promise<void> {
-    return await validateTab(page, {
+    return await validateTabDocker(page, {
       displayName: Env.displayName,
       includeFunction: options?.includeFunction,
     });
@@ -26,7 +26,7 @@ class HelloWorldTabDockerTestCase extends CaseFactory {
     page: Page,
     options?: { includeFunction: boolean }
   ): Promise<void> {
-    return await validateTab(page, {
+    return await validateTabDocker(page, {
       displayName: Env.displayName,
       includeFunction: options?.includeFunction,
     });

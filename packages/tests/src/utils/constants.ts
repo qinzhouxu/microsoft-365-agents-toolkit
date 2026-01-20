@@ -432,7 +432,7 @@ export enum LocalDebugTaskLabel {
   Compile = "Compile typescript",
   StartWebServer = "Start web server",
   DockerRun = "docker-run: debug",
-  DockerTask = "docker",
+  DockerTask = "Start Application in Docker",
   EnsureDevTunnnel = "Ensure DevTunnel",
   RunWatch = "Run watch",
   FuncStart = "func: host start",

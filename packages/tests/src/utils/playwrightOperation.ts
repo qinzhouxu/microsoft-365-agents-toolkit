@@ -1167,7 +1167,84 @@ export async function validateTab(
             force: true,
             noWaitAfter: true,
             clickCount: 2,
-            delay: 10000,
+            delay: 30000,
+          }),
+        ]);
+        console.log("after popup");
+
+        if (popup && !popup?.isClosed()) {
+          await popup
+            .click('button:has-text("Reload")', {
+              timeout: Timeout.playwrightConsentPageReload,
+            })
+            .catch(() => {});
+          await popup.click("input.button[type='submit'][value='Accept']");
+        }
+
+        await frame?.waitForSelector(`b:has-text("${options?.displayName}")`);
+      });
+    }
+
+    if (options?.includeFunction) {
+      await RetryHandler.retry(async () => {
+        console.log("verify function info");
+        const authorizeButton = await frame?.waitForSelector(
+          'button:has-text("Authorize and call Azure Function")'
+        );
+        await authorizeButton?.click();
+        const backendElement = await frame?.waitForSelector(
+          'pre:has-text("receivedHTTPRequestBody")'
+        );
+        const content = await backendElement?.innerText();
+        if (!content?.includes("User display name is"))
+          assert.fail("User display name is not found in the response");
+        console.log("verify function info success");
+      });
+    }
+  } catch (error) {
+    await page.screenshot({
+      path: getPlaywrightScreenshotPath("error"),
+      fullPage: true,
+    });
+    throw error;
+  }
+}
+
+export async function validateTabDocker(
+  page: Page,
+  options?: { displayName?: string; includeFunction?: boolean },
+  rerun = false
+) {
+  console.log("start to verify tab");
+  try {
+    const frameElementHandle = await page.waitForSelector(
+      `iframe[name="embedded-page-container"]`
+    );
+    const frame = await frameElementHandle?.contentFrame();
+    if (!rerun) {
+      await RetryHandler.retry(async () => {
+        console.log("Before popup");
+        await page.screenshot({
+          path: getPlaywrightScreenshotPath("is-page-exist"),
+          fullPage: true,
+        });
+        const [popup] = await Promise.all([
+          page
+            .waitForEvent("popup")
+            .then((popup) =>
+              popup
+                .waitForEvent("close", {
+                  timeout: Timeout.playwrightConsentPopupPage,
+                })
+                .catch(() => popup)
+            )
+            .catch(() => {}),
+          frame?.click('button:has-text("Accept")', {
+            timeout: Timeout.playwrightAddAppButton,
+            force: true,
+            noWaitAfter: true,
+            clickCount: 2,
+            delay: 30000,
           }),
         ]);
         console.log("after popup");
