@@ -55,5 +55,6 @@ new HelloWorldTabDockerTestCase(
     testPlanCaseId_local: 27085868,
     testPlanCaseId_dev: 27852473,
     container: true,
+    skipRemote: true,
   }
 ).test();

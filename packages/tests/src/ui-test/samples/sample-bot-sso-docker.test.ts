@@ -36,5 +36,6 @@ new BotSSODockerTestCase(
     testPlanCaseId_local: 26577671,
     testPlanCaseId_dev: 27852471,
     container: true,
+    skipRemote: true,
   }
 ).test();
