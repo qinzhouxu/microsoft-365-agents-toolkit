@@ -6,7 +6,7 @@ This document defines the release schedule for Microsoft 365 Agents Toolkit prod
 
 | Products | Release Type | Version | Cut Bits Date | Status | Branch | preid | series |
 |----------|--------------|---------|---------------|--------|--------|-------|--------|
-| VSC  | Prerelease   | 6.5.6 | 2026-01-2 |  | release/6.5 | preview | CY260128 |
+| VSC  | Prerelease   | 6.5.6 | 2026-01-27 |  | release/6.5 | preview | CY260128 |
 | VSC  | Prerelease   | 6.5.7 | 2026-02-04 |  | release/6.5 | preview | CY260204 |
 
 ## Automation Configuration
