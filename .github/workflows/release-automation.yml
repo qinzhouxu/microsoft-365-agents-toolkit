@@ -1,33 +1,21 @@
 name: Release Automation
 run-name: Release-Automation-${{ github.run_id }}
 
-env:
-  SCHEDULE_FILE: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.schedule_file) || 'release-schedule.md' }}
-  LOCAL_SCHEDULE_FILE: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.local_schedule_file) || '' }}
-  SCHEDULE_REPO: microsoft/Microsoft-365-Agents-Toolkit-Release-Schedule
-  RELEASE_VERSION: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.release_version) || '' }}
-  DRY_RUN: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.dry_run) || 'false' }}
-  CREATE_BRANCH: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.create_branch) || 'true' }}
-
 on:
   workflow_dispatch:
     inputs:
       schedule_file:
-        description: "Path to release schedule file (relative to schedule repo root)"
+        description: "Path to release schedule markdown file"
         required: false
-        default: "release-schedule.md"
-      local_schedule_file:
-        description: "Optional: Path to a local schedule file in this repo (for testing). Overrides schedule_file from private repo."
+        default: "docs/release-schedule.md"
+      release_index:
+        description: "Index of release to process (0-based, leave empty to list all)"
         required: false
-        default: ""
-      release_version:
-        description: "Optional: target release Version to process (e.g., 6.5.2026012001). If empty, selects by Cut Bits Date (UTC+8 today)."
-        required: false
-        default: ""
+        default: "0"
       dry_run:
         description: "Dry run mode (will not create branches or trigger CD)"
         type: boolean
-        default: false
+        default: true
       create_branch:
         description: "Create release branch if it doesn't exist"
         type: boolean
